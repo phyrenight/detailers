@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang='en'>
+  <head>
+    <meta charset='utf-8' />
+    <meta name='viewport' content='width=device-width initial-scale=1.0' />
+    <meta name='author' content='Marc Preston' />
+    <meta name='keyword' content='Detailer' />
+    <meta name='description' content='Bernel's Detailers' />
+    <title>Detailers</title>
+  </head>
+  <body>
+    <header role='banner'>
+      <h1>Detailers</h1>
+      {% if session['email'] %}
+        <a href='{{ url_for("logout") }}'>{{ session['email'] }}(logout)</a>
+      {% else %}
+        <a href='{{ url_for("login") }}'>Login</a>
+        <a href='{{ url_for("sign_up") }}'>Signup</a>
+      {% endif %}
+    </header>
+    {% block content %}
+    {% endblock %}
+    <footer>
+      <nav role='navigation'>
+        <ul>
+          <li><a href='#'>About Us</a></li>
+          <li><a href='{{ url_for("legal") }}'>Legal</a></li>
+        </ul>
+      </nav>
+    </footer>
+  </body>
+</html>

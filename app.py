@@ -3,8 +3,8 @@ from flask import flash
 from flask.ext.bctypt import Bcrypt
 from flask_mail import Mail, Message
 from database import User, Vehicle, Appointments, VehicleImages
-from config import mail_server, mail_port, mail_username, mail_password, secret_key
-
+from config import mail_server, mail_port, mail_username, mail_password, \
+                   secret_key  # 
 
 app = Flask(__name__)
 bcrypt = Bcrypt
@@ -21,10 +21,11 @@ app.secret_key = secret_key
 
 mail = Mail(app)
 
+
 @app.route('/')
 @app.route('/home')
 def home():
-  return 'home'
+    return render_template('home.html')
 
 
 @app.route('/signup', methods=['GET', 'POST'])
@@ -39,7 +40,13 @@ def login():
 
 @app.route('/logout')
 def logout():
-    return 'logout'
+    if 'email' in session:
+        session.clear()
+        flash('You have been logged out')
+        return redirect(url_for('home'))
+    else:
+        flash('You are not currently logged in')
+    return render_template('home.html')
 
 
 @app.route('/createAppointment', methods=['GET', 'POST'])
@@ -74,12 +81,12 @@ def add_employee():
 
 @app.errorhandler(500)
 def internal_error(error):
-    return 'internal_error'
+    return render_template('internal500.html')
 
 
 @app.errorhandler(404)
 def file_not_found(error):
-    return 'file_not_found'
+    return render_template('error404.html')
 
 
 if __name__ == "__main__":
