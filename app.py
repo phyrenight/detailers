@@ -5,6 +5,7 @@ from flask_mail import Mail, Message
 from database import User, Vehicle, Appointments, VehicleImages
 from config import mail_server, mail_port, mail_username, mail_password, \
                    secret_key  # 
+from forms import SignUpForm, LoginForm, ResetPasswordForm, ChangePassword
 
 app = Flask(__name__)
 bcrypt = Bcrypt
@@ -30,12 +31,55 @@ def home():
 
 @app.route('/signup', methods=['GET', 'POST'])
 def sign_up():
-    return 'signup'
+    if 'email' in session:
+        return redirect(url_for('home'))
+    
+    form = SignUpForm()
+    if request.method == 'POST':
+        if form.validate() is False:
+            flash('Please fill out the form completely')
+            return render_template('Signup.html', form=form)
+        else:
+            if db_session.query(User)filter_by(email=form.email.data).first():
+                flash('Email address already in use')
+                return render_template('Signup.html', form=form)
+            else:
+                pw_hash = bcrypt.generate_password_hash(form.password.data)
+                users = User(form.first_name.data,
+                             form.last_name.data,
+                             pw_hash,
+                             form.email.data,
+                             form.status.data)
+                db_session.add(users)
+                db.session.commit()
+                session['email'] = form.email.data
+                session['name'] = form.first_name.data
+                return redirect(url_for('home'))
+    elif request.method == 'GET':
+        return render_template('Signup.html', form=form)
 
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    return 'login'
+    if 'email' in session:
+        return redirect(url_for('home'))
+    form = LoginForm()
+    if request.method == 'POST':
+        if form.validate() is False:
+            return render_template('login.html', form=form)
+        else:
+            email = form.email.data
+            password = form.password.data
+            user = db_session.query(User).filter_by(email=email).first()
+            if user is not None and brypt.check_password_hash(user.password,
+                                                              password):
+                session['email'] = form.email.data
+                session['name'] = user.first_name
+                return redirect(url_for('home'))
+            else:
+                return redirect(url_for('login'))
+        elif request.method == 'GET':
+            return render_template('login.html', form=form)
 
 
 @app.route('/logout')
