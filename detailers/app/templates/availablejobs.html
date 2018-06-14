@@ -1,0 +1,25 @@
+{% extends 'layout.html' %}
+{% block content %}
+<div id='crumb=-container'>
+  <p>Home</p><span> / </span><p>Available Jobs</p>
+  </div>
+  <main role='main'>
+    <section class='content-container'>
+      <h2>Available Jobs</h2>
+      <section class='content'>
+      {% for job in jobs %}
+        <div>
+          <a href="">
+            <p>{{ job.first_name }}</p>
+            <p>{{ job.last_name }}</p>
+            <p>{{ job.address }}</p>
+            <p>{{ job.phone }}</p>
+            <p>{{ job.price }}</p>
+
+          </a>
+        </div>
+      {% endfor %}
+      </section>
+    </section>
+  </main>
+{% endblock %}

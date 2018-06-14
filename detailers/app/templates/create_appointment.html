@@ -1,0 +1,35 @@
+{% extends 'layout.html' %}
+{% block content %}
+  <div id='crumb-container'>
+    <p>Home</p><span> / </span><p>create appointment</p>
+  </div>
+  <main role='main'>
+    <section class='content-container'>
+      <h2>Make Appointment</h2>
+      <form action='' method='POST'>
+        {{ form.hidden_tag() }}
+        <p>
+          {{ form.date.label }}
+          {{ form.date }}
+        </p>
+        <p>
+          {{ form.model.label }}
+          {{ form.model }}
+        </p>
+        <p>
+          {{ form.make.label }}
+          {{ form.make }}
+        </p>
+        <p>
+          {{ form.year.label }}
+          {{ form.year }}
+        </p>
+        <p>
+          {{ form.color.label }}
+          {{ form.color }}
+        </p>
+        <p>{{ form.submit() }}</p>
+      </form>
+    </section>
+  </main>
+{% endblock %}

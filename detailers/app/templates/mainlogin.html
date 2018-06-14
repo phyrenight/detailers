@@ -1,0 +1,15 @@
+{% extends 'layout.html' %}
+{% block content %}
+<div id='crumb-container'>
+  <p>Home</p><span> / </span><p>Main Login</p>
+</div>
+<main role='main'>
+  <section class='content-container'>
+    <h2>Main Login</h2>
+    <div class='content'>
+      <button type='button' onclick='{{ url_for("customer_login") }}'>Login as Customer</button>
+      <button type='button'>Login as Employee</button>
+    </div>
+  </section>
+</main>
+{% endblock %}

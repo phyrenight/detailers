@@ -1,0 +1,25 @@
+{% extends 'layout.html' %}
+{% block content %}
+  <div id='crumb-container'>
+    <p>Home</p><span> / </span><p>login</p>
+  </div>
+  <main role='main'>
+    <section class='content-container'>
+      <h2>Login</h2>
+      <form action='' method='POST'>
+      {{ form.hidden_tag() }}
+      <p>
+        {{ form.email.label }}<br>
+        {{ form.email }}
+        {% for error in form.email.errors %}
+        <span style="color: red";>[{{ error }}]</span>
+        {% endfor %}
+      </p>
+      <p>
+        {{ form.password.label }}
+        {{ form.password(size=32) }}
+        </p>
+        <p>{{ form.submit() }}</p>
+    </section>
+  </main>
+{% endblock %}

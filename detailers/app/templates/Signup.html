@@ -1,0 +1,33 @@
+{% extends 'layout.html' %}
+{% block content %}
+  <div id='crumb-container'>
+    <a href='{{url_for("home") }}'>Home</a><span> / </span><p>Sign up</p>
+  </div>
+  <main role='main'>
+    <section class='content-container'>
+      <h2>Sign Up</h2>
+        <form action="/signup" method="post">
+          {{ form.hidden_tag() }}
+          <p>
+            {{ form.first_name.label }}<br>
+            {{ form.first_name(size=32) }}
+          </p>
+          <p>
+            {{ form.last_name.label }}<br>
+            {{ form.last_name(size=32) }}
+          </p>
+          <p>
+            {{ form.email.label }}<br>
+            {{ form.email }}
+          </p>
+          <p>
+            {{ form.password.label }}<br>
+            {{ form.password }}
+          </p>
+          <p>
+            {{ form.submit() }}
+          </p>
+        </form>
+    </section>
+  </main>
+{% endblock %}
