@@ -6,6 +6,13 @@
 <main role='main'>
   <section class='content-container'>
     <h2>View Appointment</h2>
+    
+    {% for appointment in appointments %}
+    <div class="appointment-div">
+      <a href="{{ url_for('view_appointment', user_id=appointment.user_id , appointment_id=appointment.id) }}">{{ appointment.date }}
+      </a>
+    </div>
+    {% endfor %}
   </section>
 </main>
 {% endblock %}

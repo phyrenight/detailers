@@ -1,5 +1,5 @@
 from datetime import datetime
-from app import db
+from app import db, bcrypt
 
 
 class Users(db.Model):
@@ -14,11 +14,16 @@ class Users(db.Model):
     vehicle = db.relationship('Vehicle', backref='customer_id', lazy='dynamic')
 
  
-    def __init__(self, first_name, last_name, email, employee=False):
+    def __init__(self, first_name, last_name, email, password, employee=False):
         self.first_name = first_name
         self.last_name = last_name
         self.email = email
         self.employee = employee
+        self.password = self.hash_password(password)
+
+
+    def hash_password(self, password):
+        return bcrypt.generate_password_hash(str(password))
 
 
 class Appointments(db.Model):

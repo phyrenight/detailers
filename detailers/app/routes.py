@@ -138,40 +138,41 @@ def view_appointments(user_id):
         return redirect(url_for('home'))
 
 
-@app.route('/<user_id>/view_appointment/<id>')
-def view_appointment(user_id, id):
+@app.route('/<user_id>/view_appointment/<appointment_id>')
+def view_appointment(user_id, appointment_id):
     """
    #    View a singular appointment
 """
     if 'email' not in session:
         return redirect(url_for('login'))
     else:
-        appointment = Appointment.query.filter_by(id=id).first()
-        user = User.query.filter_by(
-            id=appointment.id).first()
+        appointment = Appointments.query.filter_by(id=appointment_id).first()
+        user = Users.query.filter_by(
+            id=appointment.user_id).first()
         if user.email == session['email']:
             return render_template(
                 'viewappointment.html',
                 appointment=appointment,
-                detailer=detailer)
+                detailer=None)
+        else:
+            return redirect(url_for('home'))
 
-
-@app.route('/<user_id>/cancelAppointment/<id>')
-def cancel_appointment():
+@app.route('/<user_id>/cancelappointment/<appointment_id>')
+def cancel_appointment(user_id, appointment_id):
     if 'email' not in session:
         return redirect(url_for('login'))
-    appointment = Appointment.query.filter_by(id=id).first()
-    currentUser = User.query.filter_by(email=str(
+    appointment = Appointments.query.filter_by(id=appointment_id).first()
+    currentUser = Users.query.filter_by(email=str(
         session['email'])).first()
-    detailer = User.query.filter_by(
-        id=appointment.detailer_assigned_id).first()
-    customer = User.query.filter_by(
-        id=appointment.customer_id).first()
+    # detailer = Users.query.filter_by(
+    #    id=appointment.detailer_assigned_id).first()
+    customer = Users.query.filter_by(
+        id=appointment.user_id).first()
     if appointment == None:
         flash('Appointment not on file')
         return redirect(url_for('home'))
     if request.method == 'GET':
-        if session['email']  == customer.email or currentUser.status == 'admin':
+        if session['email']  == customer.email:
             return render_template("cancelappointment.html", appointment=appointment) 
         else:
             flash("This is not your appointment")
@@ -187,6 +188,13 @@ def cancel_appointment():
             flash('Appointment has been cancelled.')
             return render_template('home.html')
         return 'cancel_appointment'
+
+
+@app.route('/editappointment/<appointment_id>')
+def edit_appointment(appointment_id):
+    if 'email' not in session:
+        return redirect(url_for('login'))
+    pass
 
 
 @app.route('/resetpassword', methods=['GET', 'POST'])
