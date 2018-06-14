@@ -41,18 +41,16 @@ def sign_up():
             flash('Please fill out the form completely')
             return render_template('Signup.html', form=form)
         else:
-            if db.session.query(Users).filter_by(email=email).first():
-                #User.query.filter_by(email=form.email.data).first():
+            if Users.query.filter_by(email=form.email.data).first():
                 flash('Email address already in use')
                 return render_template('Signup.html', form=form)
-            else:
-                pw_hash = bcrypt.generate_password_hash(str(form.password.data))
-                users = User(first_name = form.first_name.data,
-                             last_name = form.last_name.data,
-                             email = form.email.data,
-                             password = pw_hash)
+            else:               
+                users = Users(form.first_name.data,
+                             form.last_name.data,
+                             form.email.data,
+                             form.password.data)
                 db.session.add(users)
-               # db.session.commit()
+                db.session.commit()
                 session['email'] = form.email.data
                 session['name'] = form.first_name.data
                 return redirect(url_for('home'))
@@ -72,7 +70,7 @@ def login():
         else:
             email = form.email.data
             password = form.password.data
-            user = User.query.filter_by(email=email).first()
+            user = Users.query.filter_by(email=form.email.data).first()
             if user is not None and bcrypt.check_password_hash(user.password,
                                                             password):
                 print user.id
@@ -104,13 +102,15 @@ def create_appointment():
     if request.method == 'GET':
         return render_template('create_appointment.html', form=form)
     elif request.method == 'POST':
-        user = User.query.filter_by(session['email']).first()
+        print session["email"]
+        user = Users.query.filter_by(email=session['email']).first()
+        print user.email
         appointment = Appointments(
-            date=form.date.value,
-            user_id=form.user_id.value)
+            date=form.date.data,
+            user_id=user.id)
         db.session.add(appointment)
-        db.commit()
-        return render_template('home')
+        db.session.commit()
+        return render_template('home.html')
 
 
 @app.route('/profile/<user_id>')
@@ -129,7 +129,7 @@ def view_appointments(user_id):
     """
     if 'email' not in session:
         redirect(url_for('login'))
-    user = User.query.filter_by(id=user_id).first()
+    user = Users.query.filter_by(id=user_id).first()
     if user.email == session['email']:
         appointments = Appointments.query.filter_by(user_id=user_id)
         return render_template('viewappointments.html', appointments=appointments)
