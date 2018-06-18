@@ -153,6 +153,7 @@ def view_appointment(user_id, appointment_id):
             return render_template(
                 'viewappointment.html',
                 appointment=appointment,
+                status="Unassigned",
                 detailer=None)
         else:
             return redirect(url_for('home'))
@@ -176,6 +177,11 @@ def cancel_appointment(user_id, appointment_id):
             return render_template("cancelappointment.html", appointment=appointment) 
         else:
             flash("This is not your appointment")
+            return redirect(url_for('home'))
+    if request.method == 'POST':
+        if session['email'] == customer.email:
+            appointment.status = "Cancelled"
+            db.session.commit()
             return redirect(url_for('home'))
 
     if request.method =='POST': 
@@ -234,9 +240,21 @@ def view_employees(user_id):
         return render_template('employeelist.html', employees=employees)
 
 
-@app.route('/<user_id>/viewemployee')
-def viewemployee(user_id):
-    return 'views'
+@app.route('/viewemployee/<employee_id>')
+def viewemployee(employee_id):
+    if 'email' not in session:
+        return redirect(url_for('login'))
+    employee = User.query.filter_by(id=employee_id).first()
+    user = User.query.filter_by(email=session['email']).first()
+    if user.employee_job == 'admin':
+        if employee == None:
+            flash('Employee does not exist')
+            return redirect(url_for('home'))
+        else:
+            return render_template('viewemployee.html', employee=employee)
+    else:
+        flash('User not logged in as admin.')
+        return redirect(url_for('home'))
 
 """
 @app.route('/assignjob', methods=['GET', 'POST'])
