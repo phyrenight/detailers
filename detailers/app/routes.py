@@ -299,10 +299,10 @@ def view_jobs():
 
 
 @app.route('/<user_id>/addemployee/', methods=['GET', 'POST'])
-def add_employee():
+def add_employee(user_id):
     if 'email' not in session:
         return redirect(url_for('login'))
-    user = Users.query.filter_by(email=session['email']).first()
+    user = Users.query.filter_by(id=user_id).first()
     form = addEmployeeForm()
     if user.employee_job == 'admin':
         if request.method == 'GET':
