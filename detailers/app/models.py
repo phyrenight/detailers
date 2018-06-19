@@ -14,7 +14,7 @@ class Users(db.Model):
     vehicle = db.relationship('Vehicle', backref='customer_id', lazy='dynamic')
 
  
-    def __init__(self, first_name, last_name, email, password, employee=False):
+    def __init__(self, first_name, last_name, email, password, employee=False, employee_job=None):
         self.first_name = first_name
         self.last_name = last_name
         self.email = email

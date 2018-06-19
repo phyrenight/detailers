@@ -118,8 +118,12 @@ def profile(user_id):
     if 'email' not in session:
         return redirect(url_for('login'))
     user = User.query.filter_by(id=user_id).first()
-    if user.email == session['email']:
-        return render_template('profile.html', user=user)
+    if user == None:
+        flash('User does not exist')
+        return redirect(url_for('home'))
+    elif user.email == session['email']:
+        appointments = Appointments.query.filter_by(user_id=user.id)
+        return render_template('profile.html', user=user, appointments=appointments)
 
 
 @app.route('/<user_id>/viewappointments')
@@ -142,7 +146,7 @@ def view_appointments(user_id):
 def view_appointment(user_id, appointment_id):
     """
    #    View a singular appointment
-"""
+    """
     if 'email' not in session:
         return redirect(url_for('login'))
     else:
@@ -157,6 +161,7 @@ def view_appointment(user_id, appointment_id):
                 detailer=None)
         else:
             return redirect(url_for('home'))
+
 
 @app.route('/<user_id>/cancelappointment/<appointment_id>')
 def cancel_appointment(user_id, appointment_id):
@@ -256,24 +261,67 @@ def viewemployee(employee_id):
         flash('User not logged in as admin.')
         return redirect(url_for('home'))
 
-"""
-@app.route('/assignjob', methods=['GET', 'POST'])
-def assign_job():
+
+@app.route('/assignjob/<appointment_id>', methods=['GET', 'POST'])
+def assign_job(appointment_id):
     if 'email' not in session:
         return redirect(url_for('login'))
-    if request.method == 'POST':
-        employee = Employee.query.
-        return render_template('assignjob.html')
-    elif request.method == 'GET':
-        return 'assign_job'
+    appointment = Appointments.query.filter_by(id=appointment_id).first()
+    detailers = Users.query.filter_by(employee_job='detailers')
+    user = Users.query.filter_by(email=session['email']).first()
+    if user.employee_job == 'admin':
+        if request.method == 'POST':
+            return render_template('assignjob.html')
+        elif request.method == 'GET':
+            return  render_template('assignjob.html', appointment=appointment, detailers=detailers)
+    else:
+        flash("Please login as an admin to access this page")
+        return redirect(url_for('home'))
 
 
-@app.route('/add_employee', methods=['GET', 'POST'])
+@app.route('/viewjobs', methods=['GET'])
+def view_jobs():
+    if 'email' not in session:
+        return redirect(url_for('login'))
+    user = User.query.filter_by(email=session['email']).first()
+    if user == None:
+        flash("Employee does not exist")
+        return redirect(url_for('home'))
+    elif user.employee == True and user.employee_job =='admin':
+        appointments = Appointments.query().all()
+        return render_template('viewjobs.html', appointments=appointments)
+    elif user.employee == True and user.employee_job == 'detaier':
+        appointments = Appointments.query.filter_by(detailer)
+        return render_template('viewjobs.html', appointments=appointments)
+    else:
+        flash('Page unavailable')
+        return redirect(url_for('home'))
+
+
+@app.route('/<user_id>/addemployee/', methods=['GET', 'POST'])
 def add_employee():
     if 'email' not in session:
         return redirect(url_for('login'))
-    return 'add_employee'
-"""
+    user = Users.query.filter_by(email=session['email']).first()
+    form = addEmployeeForm()
+    if user.employee_job == 'admin':
+        if request.method == 'GET':
+            return render_template('add_employee.html', form=form)
+        elif request.method == 'POST':
+            employee = Users(
+                form.first_name.data,
+                form.last_name.data,
+                form.email.data,
+                form.password.data,
+                True,
+                form.employee_job.data)
+            db.session.add(employee)
+            db.session.commit()
+            flash("Employee added")
+            return redirect(url_for('home'))
+    else:
+        flash("Please login as an admin to view this page")
+        return redirect(url_for('home'))
 
 
 @app.errorhandler(500)
@@ -288,7 +336,11 @@ def file_not_found(error):
 
 @app.route('/legal')
 def legal():
-    return 'legal'
+    return render_template('legal.html')
+
+@app.route('/aboutus')
+def about_us():
+    return render_template('aboutus.html')
 
 
 if __name__ == "__main__":
