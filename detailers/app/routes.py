@@ -71,9 +71,7 @@ def login():
             email = form.email.data
             password = form.password.data
             user = Users.query.filter_by(email=form.email.data).first()
-            if user is not None and bcrypt.check_password_hash(user.password,
-                                                            password):
-                print user.id
+            if user.verify_password(password):
                 session['email'] = form.email.data
                 session['name'] = user.first_name
                 return redirect(url_for('home'))
@@ -322,6 +320,26 @@ def add_employee(user_id):
     else:
         flash("Please login as an admin to view this page")
         return redirect(url_for('home'))
+
+
+@app.route('/<user_id>/changepassword', methods=['GET', 'POST'])
+def change_password(user_id):
+    if 'email' not in session:
+        return redirect(url_for('login'))
+    user = Users.query.filter_by(id=user_id).first()
+    form = ChangePasswordForm()
+    if request.method == 'GET':
+        return render_template('changepassword.html', form=form)
+    if request.method == 'POST':
+        user.password = user.hash_password(form.password.data)
+        db.session.commit()
+        flash("Password has been changed")
+        return redirect(url_for('home'))
+
+
+@app.route('/<user_id>/fireemployee', methods=['POST'])
+def fire_employee(user_id):
+    pass
 
 
 @app.errorhandler(500)
