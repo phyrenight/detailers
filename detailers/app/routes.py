@@ -115,7 +115,7 @@ def create_appointment():
 def profile(user_id):
     if 'email' not in session:
         return redirect(url_for('login'))
-    user = User.query.filter_by(id=user_id).first()
+    user = Users.query.filter_by(id=user_id).first()
     if user == None:
         flash('User does not exist')
         return redirect(url_for('home'))
@@ -177,26 +177,30 @@ def cancel_appointment(user_id, appointment_id):
         return redirect(url_for('home'))
     if request.method == 'GET':
         if session['email']  == customer.email:
-            return render_template("cancelappointment.html", appointment=appointment) 
+            return render_template("cancelappointment.html", appointment=appointment, user_id=customer.id) 
         else:
             flash("This is not your appointment")
             return redirect(url_for('home'))
+    """
     if request.method == 'POST':
         if session['email'] == customer.email:
             appointment.status = "Cancelled"
             db.session.commit()
             return redirect(url_for('home'))
-
+    """
     if request.method =='POST': 
         user = User.query.filter_by(email=str(session['email'])).first()
         appointment = Appointment.query.filter_by(id=id).first()
         if user.id == appointment.customer_id:
             appointment = Appointment()
             appointment.status = 'Cancel'
+            print"ttt"
             db_session.commit()
             flash('Appointment has been cancelled.')
             return render_template('home.html')
-        return 'cancel_appointment'
+        else:
+            print "kkkk"
+            return 'cancel_appointment'
 
 
 @app.route('/editappointment/<appointment_id>')
@@ -349,7 +353,7 @@ def internal_error(error):
 
 @app.errorhandler(404)
 def file_not_found(error):
-    return render_template('error404.html')
+    return render_template('error404.html'), 404
 
 
 @app.route('/legal')
