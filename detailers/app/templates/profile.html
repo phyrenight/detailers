@@ -6,6 +6,22 @@
   <main role='main'>
     <section class='content-container'>
       <h2>Profile</h2>
+        <section id="user-info">
+          <p>{{ user.first_name }} {{user.last_name }}</p>
+          <p>{{ user.email }}</p>
+          <form>
+            <button>change password</button>
+          </form>
+        </section>
+        <section id="appointments-info">
+          {% for appointment in appointments %}
+            <div class="appointment-container">
+              <a href="{{ url_for('view_appointment', user_id=user.id, appointment_id=appointment.id)}}">{{ appointment.date }}</a>
+              <span class="status">{{ appointment.job_status }}</span>
+              <span>{{ appointment.price }}</span>
+            </div>
+          {% endfor %}
+        </section>
     </section>
   </main>
 {% endblock %}
