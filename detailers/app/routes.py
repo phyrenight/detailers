@@ -140,7 +140,7 @@ def view_appointments(user_id):
         return redirect(url_for('home'))
 
 
-@app.route('/<user_id>/view_appointment/<appointment_id>')
+@app.route('/<user_id>/viewappointment/<appointment_id>')
 def view_appointment(user_id, appointment_id):
     """
    #    View a singular appointment
@@ -161,7 +161,7 @@ def view_appointment(user_id, appointment_id):
             return redirect(url_for('home'))
 
 
-@app.route('/<user_id>/cancelappointment/<appointment_id>')
+@app.route('/<user_id>/cancelappointment/<appointment_id>', methods=['GET', 'POST'])
 def cancel_appointment(user_id, appointment_id):
     if 'email' not in session:
         return redirect(url_for('login'))
