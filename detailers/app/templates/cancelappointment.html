@@ -7,11 +7,11 @@
   <section class='content-container'>
     <h2>Cancel Appointment</h2>
     <div class='content'>
-      <p> You are about to cancel the appoint for {{ appointment.date }}.Are you sure?</p>
-      <form action="{{ url_for('') }}">
+      <p> You are about to cancel the appointment for <span class="cancel-date">{{ appointment.date }}</span>. Are you sure?</p>
+      <form action="{{ url_for('cancel_appointment', appointment_id=appointment.id, user_id=user_id) }}" method="POST">
         <button>Yes</button>
       </form>
-      <form action="{{ url_for() }}">
+      <form action="{{ url_for('view_appointment', user_id=customer, appointment_id=appointment.id) }}">
         <button>No</button>
       </form>
     </div>
