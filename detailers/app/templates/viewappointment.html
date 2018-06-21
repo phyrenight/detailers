@@ -1,7 +1,11 @@
 {% extends 'layout.html' %}
 {% block content %}
 <div id='crumb-container'>
-  <p>Home</p><span> / </span><p>view appointment</p>
+  <p>Home</p>
+  <span> /</span>
+  <a href="{{url_for('view_appointments', user_id=appointment.user_id)}}">view appointments</a>
+  <span> /</span>
+  <p>view appointment</p>
 </div>
 <main role='main'>
   <section class='content-container'>
