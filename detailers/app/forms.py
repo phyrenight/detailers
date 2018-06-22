@@ -46,14 +46,6 @@ class PasswordResetForm(FlaskForm):
     submit = SubmitField('Submit request')
 
 
-class ChangePassword(FlaskForm):
-    email = StringField(
-        'Email',
-        validators=[DataRequired('Please enter your email.')],
-        render_kw={'placeholder': 'email@email.com' })
-    password = PasswordField
-
-
 class CreateAppointmentForm(FlaskForm):
     date = DateField('DatePicker', format='%Y-%m-%d')
     model = StringField(
@@ -67,4 +59,11 @@ class CreateAppointmentForm(FlaskForm):
         validators=[DataRequired('Please enter a year for your vehicle')])
     color = StringField(
         'vehicle color') 
+    submit = SubmitField('Submit')
+
+
+class ChangePasswordForm(FlaskForm):
+    password = PasswordField(
+        'Password',
+        validators=[DataRequired('Please enter your password')])
     submit = SubmitField('Submit')
