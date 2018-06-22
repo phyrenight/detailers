@@ -7,7 +7,7 @@
   <section class='content-container'>
     <h2>Add Employee</h2>
     <form method='POST'>
-      {{ form.hidden_tage() }}
+      {{ form.hidden_tag() }}
       <p>
         {{ form.first_name.label }}
         {{ form.first_name }}
@@ -24,6 +24,9 @@
         {{ form.phone.label }}
         {{ form.phone }}
       </p>
+      <p>
+        {{ form.password.label }}
+        {{ form.password }}
       <p>
         {{ form.submit() }}
       </p>
