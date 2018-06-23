@@ -1,17 +1,20 @@
 {% extends 'layout.html' %}
 {% block content %}
-  <div id='crumb-container'>
-    <p>Home</p><span> / </span>
-  </div>
-  <main role='main'>
+<div id='crumb-container'>
+    <p>Home</p>
+    <span> / </span>
+
+</div>
+<main role='main'>
     <section class='content-container'>
-      <h2>Employee list</h2>
-      <section class='content'>
-        {% for employee in employees %}
-        <div>
-        </div>
-        {% %}
-      </section>
+        <h2>Employee list</h2>
+        <section class='content'>
+            {% for employee in employees %}
+            <div>
+                <a href="">{{employee.last_name}}, {{employee.first_name}}</a>
+            </div>
+            {% endfor %}
+        </section>
     </section>
-  </main>
+</main>
 {% endblock %}
