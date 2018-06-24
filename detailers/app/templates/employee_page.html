@@ -1,0 +1,28 @@
+{% extends 'layout.html' %}
+{% block content %}
+<div id='crumb-container'>
+    <a href='{{ url_for("home")}}'>Home</a>
+    <span> / </span>
+    <a href='{{ url_for("")}}'>Employee List</a>
+    <span> / </span>
+    <span>{{ employee.last_name }}, {{ employee.first_name }}</span>
+</div>
+<main role='main'>
+    <section class='content-container'>
+        <h2> {{ employee.last_name }}, {{ employee.first_name }}</h2>
+        <div class='content'>
+            <p>{{ employee.email }}</p>
+            <p>{{ employee.phone }}</p>
+            <form action='{{url_for("fire_employee")}}'>
+                <button>Fire</button>
+            </form>
+        </div>
+        <div class='jobs'>
+            {% for job in appointments %}
+                <a href=''>{{job.date}}</a>
+                <span class='status'>status: {{ job.job_status }}</span>
+            {% endfor %}
+        </div>
+    </section>
+</main>
+{% endblock %}
