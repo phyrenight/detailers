@@ -1,0 +1,18 @@
+{% extends 'layout.html' %}
+{% block content %}
+<div id='crumb-container'>
+    <a href='{{ url_for("home") }}'>Home</a>
+    <span> / </span>
+    <span>Fire employee</a>
+</div>
+<main role='main'>
+    <section class='content-container'>
+        <h2>Fire Employee</h2>
+        <p>You are about to fire {{ employee.last_name }}, {{ employee.first_name }}?</p>
+        <form method='PUT' action=''>
+            <button>Confirm</button>
+            <a href='{{ url_for("home")'>Cancel</a>
+        </form>
+    </section>
+</main>
+{% endblock %}
