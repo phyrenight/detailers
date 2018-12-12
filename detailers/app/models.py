@@ -8,7 +8,7 @@ class Users(db.Model):
     last_name = db.Column(db.String(100), index=True)
     email = db.Column(db.String(250), index=True, unique=True)
     password = db.Column(db.String(250))
-    employee = db.Column(db.Boolean)
+    employee = db.Column(db.Boolean) # change to is_employee
     employee_job = db.Column(db.String)
     appointments = db.relationship('Appointments', backref='owner_id', lazy='dynamic')
     vehicle = db.relationship('Vehicle', backref='customer_id', lazy='dynamic')
@@ -24,6 +24,10 @@ class Users(db.Model):
 
     def hash_password(self, password):
         return bcrypt.generate_password_hash(str(password))
+
+
+    def verify_password(self, password):
+        return bcrypt.check_password_hash(self.password, password)
 
 
 class Appointments(db.Model):
