@@ -1,14 +1,14 @@
 {% extends 'layout.html' %}
   {% block content %}
   <div id='crumb-container'>
-    <p>Home</p><span> / </span>
+    <span>Home</span><span> / </span>
   </div>
   <main role='main'>
     <section class='content-container'>
       <h2>Home</h2>
         <div class='container'>
           {% if session['email'] %}
-            <h3>Welcome '{{session["name"]}}'</h3>
+            <h3>Welcome {{ session["name"] }}</h3>
           {% else %}
             <h3>Welcome</h3>
           {% endif %}
