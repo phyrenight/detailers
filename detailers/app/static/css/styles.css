@@ -22,7 +22,7 @@ main {
   main {
     text-align: left;
   }
-  main form, main .appointment-div {
+  main form, main .appointment-container {
     margin-left: 10px;
   }
 }

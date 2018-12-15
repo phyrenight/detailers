@@ -1,19 +1,21 @@
 {% extends 'layout.html' %}
 {% block content %}
 <div id='crumb-container'>
-  <p>Home</p>
+  <a href="{{ url_for('home') }}">Home</a>
   <span> /</span>
   <a href="{{url_for('view_appointments', user_id=appointment.user_id)}}">view appointments</a>
   <span> /</span>
-  <p>view appointment</p>
+  <span>view appointment</span>
 </div>
 <main role='main'>
   <section class='content-container'>
     <h2>View Appointment</h2>
-    <h3>{{ appointment.date }}</h3>
-    <p>status: {{appointment.job_status}}</p>
-    <p>vehicle: {{appointment.vehicle_id}}</p>
-    <p>price: {{appointment.price}}</p>
+    <div class="appointment-container">
+      <h3>{{ appointment.date }}</h3>
+      <p>status: {{appointment.job_status}}</p>
+      <p>vehicle: {{appointment.vehicle_id}}</p>
+      <p>price: {{appointment.price}}</p>
+     </div>
     <form action="{{url_for('edit_appointment', appointment_id=appointment.id)}}">
       <button type="submit">Edit</button>
     </form>
