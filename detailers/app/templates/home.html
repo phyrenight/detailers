@@ -2,7 +2,8 @@
   {% block content %}
   <nav>
     <a href="{{ url_for('create_appointment')}}">create appointment</a>
-    </nav>
+    <a href="{{ url_for('view_appointments', user_id=session['id'])}}">View Appointments</a>  
+  </nav>
   <div id='crumb-container'>
     <span>Home</span><span> / </span>
   </div>
