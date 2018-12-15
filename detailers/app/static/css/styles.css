@@ -6,3 +6,23 @@ header {
 #login_container {
   text-align: right;
 }
+
+/*footer section */
+
+footer {
+  text-align: center;
+}
+
+/* main section */
+main {
+  text-align: center;
+}
+
+@media ( min-width: 360px){
+  main {
+    text-align: left;
+  }
+  main form, main .appointment-div {
+    margin-left: 10px;
+  }
+}
