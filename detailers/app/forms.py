@@ -47,18 +47,18 @@ class PasswordResetForm(FlaskForm):
 
 
 class CreateAppointmentForm(FlaskForm):
-    date = DateField('DatePicker', format='%Y-%m-%d')
+    date = DateField('Date:', format='%Y-%m-%d')
     model = StringField(
-        'Vehicle model',
+        'Vehicle Model:',
         validators=[DataRequired('Please enter a vehicle model')])
     make = StringField(
-        'Vehicle make',
+        'Vehicle Make:',
         validators=[DataRequired('Please enter your vehicle make')])
     year = StringField(
-        'vehicle year',
+        'Vehicle Year:',
         validators=[DataRequired('Please enter a year for your vehicle')])
     color = StringField(
-        'vehicle color') 
+        'Vehicle Color:')
     submit = SubmitField('Submit')
 
 
