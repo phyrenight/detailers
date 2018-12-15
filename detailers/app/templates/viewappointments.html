@@ -1,12 +1,11 @@
 {% extends 'layout.html' %}
 {% block content %}
 <div id='crumb-container'>
-  <p>Home</p><span> / </span><p>View all appointments</p>
+  <a href="{{ url_for('home')}}">Home</a><span> / </span><span>View all appointments</span>
 </div>
 <main role='main'>
   <section class='content-container'>
     <h2>View Appointment</h2>
-    
     {% for appointment in appointments %}
     <div class="appointment-div">
       <a href="{{ url_for('view_appointment', user_id=appointment.user_id , appointment_id=appointment.id) }}">{{ appointment.date }}
