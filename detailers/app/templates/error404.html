@@ -1,5 +1,10 @@
 {% extends 'layout.html' %}
 {% block content %}
+<div class="crumb-container">
+  <a href=" {{ url_for('home') }}">Home</a>
+  <span>/</span>
+  <span>Error 404</span>
+  </div>
   <main role='main'>
     <section>
       <h2>Error File Not Found</h2>
