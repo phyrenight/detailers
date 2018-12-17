@@ -1,7 +1,7 @@
 {% extends 'layout.html' %}
 {% block content %}
   <div id='crumb-container'>
-    <p>Home</p><span> / </span><span>login</span>
+    <a href="{{ url_for('home') }}">Home</a><span> / </span><span>login</span>
   </div>
   <main role='main'>
     <section class='content-container'>
@@ -16,7 +16,7 @@
         {% endfor %}
       </p>
       <p>
-        {{ form.password.label }}
+        {{ form.password.label }}<br>
         {{ form.password(size=32) }}
         </p>
         <p>{{ form.submit() }}</p>
