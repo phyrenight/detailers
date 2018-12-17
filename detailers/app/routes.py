@@ -5,11 +5,11 @@ from flask.ext.bcrypt import Bcrypt
 from flask_mail import Mail, Message
 from app.models import Users, Appointments,Vehicle#, VehicleImages
 from config import Config  #mail_server, mail_port, mail_username, mail_password, \
-                   #secret_key  # 
-from app.forms import SignUpForm, LoginForm, PasswordResetForm, ChangePassword
+                   #secret_key  #
+from app.forms import SignUpForm, LoginForm, PasswordResetForm, ChangePasswordForm
 from app.forms import CreateAppointmentForm
 
-#bcrypt = Bcrypt(app)
+
 db.create_all()
 app.config['MAIL_SERVER'] = Config.mail_server
 app.config['MAIL_PORT'] = Config.mail_port
@@ -44,7 +44,7 @@ def sign_up():
             if Users.query.filter_by(email=form.email.data).first():
                 flash('Email address already in use')
                 return render_template('Signup.html', form=form)
-            else:               
+            else:
                 users = Users(form.first_name.data,
                              form.last_name.data,
                              form.email.data,
@@ -54,7 +54,7 @@ def sign_up():
                 session['email'] = form.email.data
                 session['name'] = form.first_name.data
                 return redirect(url_for('home'))
-            
+
     elif request.method == 'GET':
         return render_template('Signup.html', form=form)
 
@@ -74,6 +74,7 @@ def login():
             if user.verify_password(password):
                 session['email'] = form.email.data
                 session['name'] = user.first_name
+                session['id'] = user.id
                 return redirect(url_for('home'))
             else:
                 return redirect(url_for('login'))
@@ -95,6 +96,7 @@ def logout():
 @app.route('/createappointment', methods=['GET', 'POST'])
 def create_appointment():
     if 'email' not in session:
+        #TODO: add flash to notify user that they must be logged in to make an appointment
         redirect(url_for('login'))
     form = CreateAppointmentForm()
     if request.method == 'GET':
@@ -134,6 +136,8 @@ def view_appointments(user_id):
     user = Users.query.filter_by(id=user_id).first()
     if user.email == session['email']:
         appointments = Appointments.query.filter_by(user_id=user_id)
+        for i in appointments:
+            print(i.date)
         return render_template('viewappointments.html', appointments=appointments)
     else:
         flash('Not current users info')
@@ -166,41 +170,27 @@ def cancel_appointment(user_id, appointment_id):
     if 'email' not in session:
         return redirect(url_for('login'))
     appointment = Appointments.query.filter_by(id=appointment_id).first()
-    currentUser = Users.query.filter_by(email=str(
-        session['email'])).first()
-    # detailer = Users.query.filter_by(
-    #    id=appointment.detailer_assigned_id).first()
-    customer = Users.query.filter_by(
-        id=appointment.user_id).first()
+    user = Users.query.filter_by(email=str(session['email'])).first()
     if appointment == None:
         flash('Appointment not on file')
         return redirect(url_for('home'))
     if request.method == 'GET':
-        if session['email']  == customer.email:
-            return render_template("cancelappointment.html", appointment=appointment, user_id=customer.id) 
+        if session['email']  == user.email or user.employee:
+            return render_template("cancelappointment.html",
+                                   appointment=appointment,
+                                   user_id=user.id)
         else:
             flash("This is not your appointment")
             return redirect(url_for('home'))
-    """
-    if request.method == 'POST':
-        if session['email'] == customer.email:
-            appointment.status = "Cancelled"
+    if request.method =='POST':
+        if user.id == appointment.user_id:
+            appointment.job_status = 'Cancelled'
             db.session.commit()
-            return redirect(url_for('home'))
-    """
-    if request.method =='POST': 
-        user = User.query.filter_by(email=str(session['email'])).first()
-        appointment = Appointment.query.filter_by(id=id).first()
-        if user.id == appointment.customer_id:
-            appointment = Appointment()
-            appointment.status = 'Cancel'
-            print"ttt"
-            db_session.commit()
             flash('Appointment has been cancelled.')
-            return render_template('home.html')
+            return redirect(url_for('home'))
         else:
-            print "kkkk"
-            return 'cancel_appointment'
+            flash('This appointment is not yours.')
+            return redirect(url_for('home'))
 
 
 @app.route('/editappointment/<appointment_id>')
@@ -333,12 +323,16 @@ def change_password(user_id):
     user = Users.query.filter_by(id=user_id).first()
     form = ChangePasswordForm()
     if request.method == 'GET':
-        return render_template('changepassword.html', form=form)
+        return render_template('change_password.html', form=form)
     if request.method == 'POST':
-        user.password = user.hash_password(form.password.data)
-        db.session.commit()
-        flash("Password has been changed")
-        return redirect(url_for('home'))
+        if(form.password.data):
+            user.password = user.hash_password(form.password.data)
+            db.session.commit()
+            flash("Password has been changed")
+            return redirect(url_for('home'))
+        else:
+            flash("Please enter a Password")
+            return render_template('change_password.html', form=form)
 
 
 @app.route('/<user_id>/fireemployee', methods=['POST'])
