@@ -1,7 +1,7 @@
 {% extends 'layout.html' %}
 {% block content %}
 <div id='crumb-container'>
-  <p>Home</p><span> / </span><p> Cancel appointment</p>
+  <a href="{{ url_for('home') }}">Home</a><span> / </span><span> Cancel appointment</span>
 </div>
 <main role='main'>
   <section class='content-container'>
@@ -11,7 +11,7 @@
       <form action="{{ url_for('cancel_appointment', appointment_id=appointment.id, user_id=user_id) }}" method="POST">
         <button>Yes</button>
       </form>
-      <form action="{{ url_for('view_appointment', user_id=customer, appointment_id=appointment.id) }}">
+      <form action="{{ url_for('view_appointment', user_id=user_id, appointment_id=appointment.id) }}">
         <button>No</button>
       </form>
     </div>
