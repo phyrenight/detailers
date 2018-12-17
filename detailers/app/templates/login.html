@@ -20,6 +20,8 @@
         {{ form.password(size=32) }}
         </p>
         <p>{{ form.submit() }}</p>
+      </form>
+      <a href="{{ url_for('reset_password')}}">Reset Password</a>
     </section>
   </main>
 {% endblock %}
