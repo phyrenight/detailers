@@ -58,6 +58,20 @@ def sign_up():
     elif request.method == 'GET':
         return render_template('Signup.html', form=form)
 
+@app.route('/choose_login')
+def main_login():
+    if 'email' in session:
+        flash("You are already logged in")
+        return  redirect(url_for('home'))
+    else:
+        return render_template('mainlogin.html')
+
+
+@app.route('/employee_login', method=['GET', 'POST'])
+def employee_login():
+    if 'email' in session:
+        flash("You are already logged in ")
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
