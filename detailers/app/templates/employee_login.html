@@ -1,0 +1,30 @@
+{% extends 'layout.html' %}
+{% block content %}
+  <div id='crumb-container'>
+    <a href="{{ url_for('home') }}">Home</a><span> / </span><span> Employee login</span>
+  </div>
+  <main role='main'>
+    <section class='content-container'>
+      <h2>Employee Login</h2>
+      <form action='' method='POST'>
+      {{ form.hidden_tag() }}
+      <p>
+        {{ form.email.label }}<br>
+        {{ form.email }}
+        {% for error in form.email.errors %}
+        <span style="color: red";>[{{ error }}]</span>
+        {% endfor %}
+      </p>
+      <p>
+        {{ form.password.label }}<br>
+        {{ form.password(size=32) }}
+        {% for error in form.email.errors %}
+        <span style="color: red";>[{{ error }}]</span>
+        {% endfor %}
+      </p>
+      <p>{{ form.submit() }}</p>
+      </form>
+      <a href="{{ url_for('reset_password') }}">Reset Password</a>
+    </section>
+  </main>
+{% endblock %}

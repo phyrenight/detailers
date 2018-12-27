@@ -67,10 +67,30 @@ def main_login():
         return render_template('mainlogin.html')
 
 
-@app.route('/employee_login', method=['GET', 'POST'])
+@app.route('/employee_login', methods=['GET', 'POST'])
 def employee_login():
+    form  = LoginForm()
     if 'email' in session:
         flash("You are already logged in ")
+        return redirect(url_for('home'))
+    else:
+        if request.method == 'POST':
+            if form.validate() is False:
+                flash("Please fill in the input")
+                return render_template('employee_login.html', form=form)
+            else:
+                email = form.email.data
+                password = form.password.data
+                user = Users.query.filter_by(email=form.email.data).first()
+                if user.verify_password(password) and user.employee:
+                    session['email'] = form.email.data
+                    session['name'] = user.first_name
+                    session['id'] = user.id
+                    return redirect(url_for('home'))
+                else:
+                   return redirect(url_for('login'))
+        elif request.method == 'GET':
+            return render_template('employee_login.html', form=form)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -106,6 +126,21 @@ def logout():
         flash('You are not currently logged in')
     return render_template('home.html')
 
+
+@app.route('/add_marc')
+def add_marc():
+    if 'email' in session:
+        return redirect(url_for('home'))
+    else:
+        users = Users('Marc',
+                      'Preston',
+                      'phyrenight@gmail.com',
+                      'C@melB@ck@58',
+                      True,
+                      'Admin')
+        db.session.add(users)
+        db.session.commit()
+        return render_template('home.html')
 
 @app.route('/createappointment', methods=['GET', 'POST'])
 def create_appointment():
