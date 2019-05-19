@@ -59,40 +59,6 @@ def sign_up():
     elif request.method == 'GET':
         return render_template('Signup.html', form=form)
 
-@app.route('/choose_login')
-def main_login():
-    if 'email' in session:
-        flash('You are already logged in')
-        return  redirect(url_for('home'))
-    else:
-        return render_template('mainlogin.html')
-
-
-@app.route('/employee_login', methods=['GET', 'POST'])
-def employee_login():
-    form  = LoginForm()
-    if 'email' in session:
-        flash('You are already logged in')
-        return redirect(url_for('home'))
-    else:
-        if request.method == 'POST':
-            if form.validate() is False:
-                flash('Please fill in the input')
-                return render_template('employee_login.html', form=form)
-            else:
-                email = form.email.data
-                password = form.password.data
-                user = Users.query.filter_by(email=form.email.data).first()
-                if user.verify_password(password) and user.employee:
-                    session['email'] = form.email.data
-                    session['name'] = user.first_name
-                    session['id'] = user.id
-                    return redirect(url_for('home'))
-                else:
-                   return redirect(url_for('login'))
-        elif request.method == 'GET':
-            return render_template('employee_login.html', form=form)
-
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -127,21 +93,6 @@ def logout():
         flash('You are not currently logged in')
     return render_template('home.html')
 
-
-@app.route('/add_marc')
-def add_marc():
-    if 'email' in session:
-        return redirect(url_for('home'))
-    else:
-        users = Users('Marc',
-                      'Preston',
-                      'phyrenight@gmail.com',
-                      'C@melB@ck@58',
-                      True,
-                      'Admin')
-        db.session.add(users)
-        db.session.commit()
-        return render_template('home.html')
 
 @app.route('/createappointment', methods=['GET', 'POST'])
 def create_appointment():
@@ -197,7 +148,7 @@ def view_appointments(user_id):
 @app.route('/<user_id>/viewappointment/<appointment_id>')
 def view_appointment(user_id, appointment_id):
     """
-   #    View a singular appointment
+        View a singular appointment
     """
     if 'email' not in session:
         return redirect(url_for('login'))
@@ -209,7 +160,7 @@ def view_appointment(user_id, appointment_id):
             return render_template(
                 'viewappointment.html',
                 appointment=appointment,
-                status="Unassigned",
+                status='Unassigned',
                 detailer=None)
         else:
             return redirect(url_for('home'))
@@ -226,7 +177,7 @@ def cancel_appointment(user_id, appointment_id):
         return redirect(url_for('home'))
     if request.method == 'GET':
         if session['email']  == user.email or user.employee:
-            return render_template("cancelappointment.html",
+            return render_template('cancelappointment.html',
                                    appointment=appointment,
                                    user_id=user.id)
         else:
@@ -241,13 +192,6 @@ def cancel_appointment(user_id, appointment_id):
         else:
             flash('This appointment is not yours.')
             return redirect(url_for('home'))
-
-
-@app.route('/editappointment/<appointment_id>')
-def edit_appointment(appointment_id):
-    if 'email' not in session:
-        return redirect(url_for('login'))
-    pass
 
 
 @app.route('/resetpassword', methods=['GET', 'POST'])
@@ -277,94 +221,6 @@ def reset_password():
                 return render_template('resetpassword.html', form=form)
 
 
-@app.route('/<user_id>/viewemployees')
-def view_employees(user_id):
-    if 'email' not in session:
-        return redirect(url_for('login'))
-    user = User.query.filter_by(id=user_id).first()
-    if user.email == session['email'] and user.employee_job == 'admin':
-        employees = User.query.filter_by(employee==True)
-        return render_template('employeelist.html', employees=employees)
-
-
-@app.route('/viewemployee/<employee_id>')
-def viewemployee(employee_id):
-    if 'email' not in session:
-        return redirect(url_for('login'))
-    employee = User.query.filter_by(id=employee_id).first()
-    user = User.query.filter_by(email=session['email']).first()
-    if user.employee_job == 'admin':
-        if employee == None:
-            flash('Employee does not exist')
-            return redirect(url_for('home'))
-        else:
-            return render_template('viewemployee.html', employee=employee)
-    else:
-        flash('User not logged in as admin.')
-        return redirect(url_for('home'))
-
-
-@app.route('/assignjob/<appointment_id>', methods=['GET', 'POST'])
-def assign_job(appointment_id):
-    if 'email' not in session:
-        return redirect(url_for('login'))
-    appointment = Appointments.query.filter_by(id=appointment_id).first()
-    detailers = Users.query.filter_by(employee_job='detailers')
-    user = Users.query.filter_by(email=session['email']).first()
-    if user.employee_job == 'admin':
-        if request.method == 'POST':
-            return render_template('assignjob.html')
-        elif request.method == 'GET':
-            return  render_template('assignjob.html', appointment=appointment, detailers=detailers)
-    else:
-        flash('Please login as an admin to access this page')
-        return redirect(url_for('home'))
-
-
-@app.route('/viewjobs', methods=['GET'])
-def view_jobs():
-    if 'email' not in session:
-        return redirect(url_for('login'))
-    user = User.query.filter_by(email=session['email']).first()
-    if user == None:
-        flash('Employee does not exist')
-        return redirect(url_for('home'))
-    elif user.employee == True and user.employee_job =='admin':
-        appointments = Appointments.query().all()
-        return render_template('viewjobs.html', appointments=appointments)
-    elif user.employee == True and user.employee_job == 'detaier':
-        appointments = Appointments.query.filter_by(detailer)
-        return render_template('viewjobs.html', appointments=appointments)
-    else:
-        flash('Page unavailable')
-        return redirect(url_for('home'))
-
-
-@app.route('/<user_id>/addemployee/', methods=['GET', 'POST'])
-def add_employee(user_id):
-    if 'email' not in session:
-        return redirect(url_for('login'))
-    user = Users.query.filter_by(id=user_id).first()
-    form = addEmployeeForm()
-    if user.employee_job == 'admin':
-        if request.method == 'GET':
-            return render_template('add_employee.html', form=form)
-        elif request.method == 'POST':
-            employee = Users(
-                form.first_name.data,
-                form.last_name.data,
-                form.email.data,
-                form.password.data,
-                True,
-                form.employee_job.data)
-            db.session.add(employee)
-            db.session.commit()
-            flash('Employee added')
-            return redirect(url_for('home'))
-    else:
-        flash('Please login as an admin to view this page')
-        return redirect(url_for('home'))
-
 
 @app.route('/<user_id>/changepassword', methods=['GET', 'POST'])
 def change_password(user_id):
@@ -385,11 +241,6 @@ def change_password(user_id):
             return render_template('change_password.html', form=form)
 
 
-@app.route('/<user_id>/fireemployee', methods=['POST'])
-def fire_employee(user_id):
-    pass
-
-
 @app.errorhandler(500)
 def internal_error(error):
     return render_template('internal500.html')
@@ -403,6 +254,7 @@ def file_not_found(error):
 @app.route('/legal')
 def legal():
     return render_template('legal.html')
+
 
 @app.route('/aboutus')
 def about_us():
