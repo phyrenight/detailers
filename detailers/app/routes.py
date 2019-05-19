@@ -37,7 +37,6 @@ def sign_up():
     form = SignUpForm()
     email = str(form.email.data)
     if request.method == 'POST':
-        print (form.email.data)
         if form.validate() is False:
             flash('Please fill out the form completely')
             return render_template('Signup.html', form=form)
@@ -54,6 +53,8 @@ def sign_up():
                 db.session.commit()
                 session['email'] = form.email.data
                 session['name'] = form.first_name.data
+                user_id = Users.query.filter_by(email=form.email.data).first()
+                session['id'] = user_id.id
                 return redirect(url_for('home'))
 
     elif request.method == 'GET':
@@ -72,6 +73,7 @@ def login():
             email = form.email.data
             password = form.password.data
             user = Users.query.filter_by(email=form.email.data).first()
+            print(user)
             if user.verify_password(password):
                 session['email'] = form.email.data
                 session['name'] = user.first_name
