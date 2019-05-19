@@ -2,8 +2,10 @@
   {% block content %}
   <nav>
     <a href="{{ url_for('create_appointment') }}">create appointment</a>
-    <a href="{{ url_for('view_appointments', user_id=session['id']) }}">View Appointments</a>
-    <a href="{{ url_for('profile', user_id=session['id']) }}">Profile</a>
+    {% if session[email] %}
+      <a href="{{ url_for('view_appointments', user_id=session['id']) }}">View Appointments</a>
+      <a href="{{ url_for('profile', user_id=session['id']) }}">Profile</a>
+    {% endif %}
   </nav>
   <div id='crumb-container'>
     <span>Home</span><span> / </span>
@@ -18,7 +20,7 @@
             <h3>Welcome</h3>
             {% with messages = get_flashed_messages() %}
               {% if messages %}
-                <ul class="flashes">
+                <ul class='flashes'>
                   {% for message in messages %}
                     <li>
                        {{ message }}
