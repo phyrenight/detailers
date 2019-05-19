@@ -1,23 +1,24 @@
 from flask import flash, render_template, request, session, redirect, url_for
 from app import app
 from app import db
-from flask.ext.bcrypt import Bcrypt
+from flask_bcrypt import Bcrypt
 from flask_mail import Mail, Message
 from app.models import Users, Appointments,Vehicle#, VehicleImages
-from config import Config  #mail_server, mail_port, mail_username, mail_password, \
+#from config import Config  #mail_server, mail_port, mail_username, mail_password, \
                    #secret_key  #
 from app.forms import SignUpForm, LoginForm, PasswordResetForm, ChangePasswordForm
 from app.forms import CreateAppointmentForm
 
 
 db.create_all()
+"""
 app.config['MAIL_SERVER'] = Config.mail_server
 app.config['MAIL_PORT'] = Config.mail_port
 app.config['MAIL_USERNAME'] = Config.mail_username
 app.config['MAIL_PASSWORD'] = Config.mail_password
 app.config['MAIL_USE_TLS'] = False
 app.config['MAIL_USE_SSL'] = True
-
+"""
 
 mail = Mail(app)
 
@@ -36,7 +37,7 @@ def sign_up():
     form = SignUpForm()
     email = str(form.email.data)
     if request.method == 'POST':
-        print form.email.data
+        print (form.email.data)
         if form.validate() is False:
             flash('Please fill out the form completely')
             return render_template('Signup.html', form=form)
@@ -61,7 +62,7 @@ def sign_up():
 @app.route('/choose_login')
 def main_login():
     if 'email' in session:
-        flash("You are already logged in")
+        flash('You are already logged in')
         return  redirect(url_for('home'))
     else:
         return render_template('mainlogin.html')
@@ -71,12 +72,12 @@ def main_login():
 def employee_login():
     form  = LoginForm()
     if 'email' in session:
-        flash("You are already logged in ")
+        flash('You are already logged in')
         return redirect(url_for('home'))
     else:
         if request.method == 'POST':
             if form.validate() is False:
-                flash("Please fill in the input")
+                flash('Please fill in the input')
                 return render_template('employee_login.html', form=form)
             else:
                 email = form.email.data
@@ -151,9 +152,9 @@ def create_appointment():
     if request.method == 'GET':
         return render_template('create_appointment.html', form=form)
     elif request.method == 'POST':
-        print session["email"]
+        print (session["email"])
         user = Users.query.filter_by(email=session['email']).first()
-        print user.email
+        print (user.email)
         appointment = Appointments(
             date=form.date.data,
             user_id=user.id)
@@ -316,7 +317,7 @@ def assign_job(appointment_id):
         elif request.method == 'GET':
             return  render_template('assignjob.html', appointment=appointment, detailers=detailers)
     else:
-        flash("Please login as an admin to access this page")
+        flash('Please login as an admin to access this page')
         return redirect(url_for('home'))
 
 
@@ -326,7 +327,7 @@ def view_jobs():
         return redirect(url_for('login'))
     user = User.query.filter_by(email=session['email']).first()
     if user == None:
-        flash("Employee does not exist")
+        flash('Employee does not exist')
         return redirect(url_for('home'))
     elif user.employee == True and user.employee_job =='admin':
         appointments = Appointments.query().all()
@@ -358,10 +359,10 @@ def add_employee(user_id):
                 form.employee_job.data)
             db.session.add(employee)
             db.session.commit()
-            flash("Employee added")
+            flash('Employee added')
             return redirect(url_for('home'))
     else:
-        flash("Please login as an admin to view this page")
+        flash('Please login as an admin to view this page')
         return redirect(url_for('home'))
 
 
@@ -377,10 +378,10 @@ def change_password(user_id):
         if(form.password.data):
             user.password = user.hash_password(form.password.data)
             db.session.commit()
-            flash("Password has been changed")
+            flash('Password has been changed')
             return redirect(url_for('home'))
         else:
-            flash("Please enter a Password")
+            flash('Please enter a Password')
             return render_template('change_password.html', form=form)
 
 
@@ -408,5 +409,5 @@ def about_us():
     return render_template('aboutus.html')
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     app.run(debug=True)
